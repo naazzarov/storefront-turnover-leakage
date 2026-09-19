@@ -16,7 +16,7 @@
 A Case Study in Urban Storefront Turnover}
 
 \author{Bahodir Nazarov\thanks{Correspondence: \texttt{b.nazarov0309@gmail.com}.
-Code and derived data: \url{https://github.com/naazzarov/yelp-big-data-analysis}}}
+Code and derived data: \url{https://github.com/naazzarov/storefront-turnover-leakage}}}
 
 \date{\today}
 
@@ -33,21 +33,21 @@ encodings over administrative units.
 
 On a task built from 1.21 million City of Chicago business licences spanning
 1995--2026, we predict which of 135,553 storefronts exhibit excess tenant
-turnover. Random $k$-fold cross-validation reports ROC AUC $0.971$ and average
-precision $0.762$ ($15.2\times$ over the base rate). Spatially blocked
-cross-validation over the same data and model reports $0.712$ and $0.123$
-($2.5\times$)---an average-precision inflation of more than sixfold.
+turnover. Random $k$-fold cross-validation reports ROC AUC $0.970$ and average
+precision $0.756$ ($15.1\times$ over the base rate). Spatially blocked
+cross-validation over the same data and model reports $0.693$ and $0.114$
+($2.3\times$)---an average-precision inflation of more than sixfold.
 
 Three findings follow. First, blocking at $100$\,m--$1$\,km is statistically
-indistinguishable from no blocking at all (AUC $0.972$--$0.977$); performance
+indistinguishable from no blocking at all (AUC $0.971$--$0.977$); performance
 collapses only once blocks approach administrative scale. Practitioners who
 adopt spatial cross-validation but choose small blocks obtain inflated numbers
 carrying a methodologically respectable label. Second, leakage is concentrated
 in model families by flexibility: logistic regression inflates by $0.013$ AUC
-while gradient boosting inflates by $0.295$. Under honest evaluation all
-families are equivalent ($0.68$--$0.70$), so random splits corrupt model
+while gradient boosting inflates by $0.277$. Under honest evaluation all
+families are equivalent ($0.62$--$0.70$), so random splits corrupt model
 \emph{selection}, not merely model assessment. Third, ablation localises the
-leak: ward and community-area aggregates inflate by $0.336$ AUC against $0.038$
+leak: ward and community-area aggregates inflate by $0.321$ AUC against $0.034$
 for $50$--$500$\,m neighbourhood features. Because a leave-one-out group mean is
 near-constant within its group, it acts as a group identifier, and the
 evaluation split must align with the grouping used to construct it.
@@ -75,7 +75,7 @@ Spatial blocking is typically described as a binary choice: random splits are
 wrong, spatial splits are right. We find it is a continuum governed by a
 specific quantity---the spatial support of the features. Our features summarise
 neighbourhoods out to $500$\,m. Blocks of $100$\,m, $250$\,m, $500$\,m and
-$1$\,km yield AUC $0.977$, $0.976$, $0.976$ and $0.972$, against $0.971$ for
+$1$\,km yield AUC $0.977$, $0.977$, $0.976$ and $0.971$, against $0.970$ for
 random splits. A practitioner who reads the literature, adopts spatial
 cross-validation, and selects a $500$\,m block obtains a fully inflated estimate
 while believing the problem addressed. This is a worse position than using
@@ -83,8 +83,8 @@ random splits knowingly.
 
 \paragraph{The dominant channel is group aggregation, not proximity.}
 We expected neighbourhood features to carry the leak. Ablation shows otherwise:
-ward and community-area aggregates inflate AUC by $0.336$, an order of magnitude
-more than the $50$--$500$\,m neighbourhood features at $0.038$. The mechanism is
+ward and community-area aggregates inflate AUC by $0.321$, an order of magnitude
+more than the $50$--$500$\,m neighbourhood features at $0.034$. The mechanism is
 not spatial in any essential way. A leave-one-out group mean varies little
 within its group, so it encodes group membership, and under a random split the
 model recovers each group's label rate from training rows sharing that group.
@@ -95,8 +95,8 @@ therefore applies to any grouped data with target-encoded features, not only to
 geography.
 
 \paragraph{Leakage is a function of model capacity.}
-Inflation ranges from $0.013$ AUC for logistic regression to $0.295$ for
-gradient boosting. Under blocked evaluation every family lands between $0.68$
+Inflation ranges from $0.013$ AUC for logistic regression to $0.277$ for
+gradient boosting. Under blocked evaluation every family lands between $0.62$
 and $0.70$. Random splits thus misrank models: a practitioner comparing families
 under random cross-validation concludes that gradient boosting substantially
 outperforms logistic regression, when honestly evaluated they are equivalent.
@@ -256,14 +256,14 @@ significant.
 \toprule
 Partition & Blocks & ROC AUC & AP & Lift \\
 \midrule
-Random (none)          & ---    & $0.971 \pm 0.004$ & $0.762$ & $15.2\times$ \\
-Grid $100$\,m          & 20{,}822 & $0.977 \pm 0.003$ & $0.753$ & $15.1\times$ \\
-Grid $250$\,m          & 7{,}111  & $0.976 \pm 0.002$ & $0.747$ & $14.9\times$ \\
+Random (none)          & ---    & $0.970 \pm 0.004$ & $0.756$ & $15.1\times$ \\
+Grid $100$\,m          & 20{,}822 & $0.977 \pm 0.003$ & $0.755$ & $15.1\times$ \\
+Grid $250$\,m          & 7{,}111  & $0.977 \pm 0.002$ & $0.748$ & $15.0\times$ \\
 Grid $500$\,m          & 2{,}202  & $0.976 \pm 0.002$ & $0.760$ & $15.2\times$ \\
-Grid $1$\,km           & 632    & $0.972 \pm 0.005$ & $0.735$ & $14.7\times$ \\
-Grid $2$\,km           & 189    & $0.942 \pm 0.015$ & $0.618$ & $12.4\times$ \\
-Grid $5$\,km           & 40     & $0.826 \pm 0.092$ & $0.237$ & $4.7\times$ \\
-Community area         & 78     & $0.712 \pm 0.042$ & $0.123$ & $2.5\times$ \\
+Grid $1$\,km           & 632    & $0.971 \pm 0.005$ & $0.731$ & $14.6\times$ \\
+Grid $2$\,km           & 189    & $0.942 \pm 0.014$ & $0.618$ & $12.4\times$ \\
+Grid $5$\,km           & 40     & $0.825 \pm 0.091$ & $0.208$ & $4.2\times$ \\
+Community area         & 78     & $0.693 \pm 0.062$ & $0.114$ & $2.3\times$ \\
 \bottomrule
 \end{tabular}
 \caption{Performance against partitioning scheme. Data, features and model are
@@ -272,7 +272,18 @@ is indistinguishable from no blocking.}
 \label{tab:scale}
 \end{table}
 
-Table~\ref{tab:scale} shows performance is flat from random splits through
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{../outputs/figures/fig1_block_scale.pdf}
+\caption{Performance against spatial block size. The curve is flat until blocks
+exceed the $500$\,m spatial support of the features (grey line), then falls.
+A practitioner selecting a block below that scale obtains an estimate
+indistinguishable from random splits.}
+\label{fig:scale}
+\end{figure}
+
+Table~\ref{tab:scale} and Figure~\ref{fig:scale} show performance is flat from
+random splits through
 $1$\,km blocks and falls only beyond $2$\,km. Since features summarise
 neighbourhoods to $500$\,m, blocks at or below that scale cannot sever the
 dependence they induce: information propagates as far as the blocks are wide.
@@ -292,8 +303,8 @@ Model & Random AUC & Blocked AUC & $\Delta$ & Random AP & Blocked AP \\
 \midrule
 Logistic regression & $0.709$ & $0.696$ & $+0.013$ & $0.098$ & $0.098$ \\
 $k$NN ($k=25$)      & $0.686$ & $0.616$ & $+0.070$ & $0.092$ & $0.072$ \\
-Random forest       & $0.934$ & $0.682$ & $+0.252$ & $0.673$ & $0.086$ \\
-Gradient boosting   & $0.971$ & $0.676$ & $+0.295$ & $0.751$ & $0.110$ \\
+Random forest       & $0.933$ & $0.686$ & $+0.247$ & $0.670$ & $0.086$ \\
+Gradient boosting   & $0.970$ & $0.693$ & $+0.277$ & $0.756$ & $0.114$ \\
 \bottomrule
 \end{tabular}
 \caption{Inflation by model family. Under blocked evaluation all families are
@@ -301,10 +312,20 @@ equivalent; under random splits they are not.}
 \label{tab:models}
 \end{table}
 
-Table~\ref{tab:models} shows inflation rising with model flexibility. The
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.78\textwidth]{../outputs/figures/fig2_model_families.pdf}
+\caption{Paired random and blocked scores by model family. Honest scores
+coincide; random-split scores do not, so the ranking is an artefact of the
+partition.}
+\label{fig:models}
+\end{figure}
+
+Table~\ref{tab:models} and Figure~\ref{fig:models} show inflation rising with
+model flexibility. The
 consequence extends beyond reporting. Under random cross-validation gradient
-boosting appears to outperform logistic regression by $0.262$ AUC; under blocked
-evaluation the gap is $-0.020$. Random splits therefore do not merely inflate a
+boosting appears to outperform logistic regression by $0.261$ AUC; under blocked
+evaluation the gap is $-0.003$. Random splits therefore do not merely inflate a
 figure, they invert a model-selection decision, and the inflation is largest
 precisely for the model families practitioners most often prefer.
 
@@ -316,11 +337,11 @@ precisely for the model families practitioners most often prefer.
 \toprule
 Feature family & $k$ & Random & Blocked & $\Delta$ \\
 \midrule
-Area aggregates (ward, community area) & 4 & $0.979$ & $0.642$ & $+0.336$ \\
-Raw coordinates                        & 2 & $0.660$ & $0.592$ & $+0.068$ \\
-Neighbourhood LOO ($50$--$500$\,m)     & 6 & $0.722$ & $0.685$ & $+0.038$ \\
-Density counts                         & 3 & $0.693$ & $0.673$ & $+0.020$ \\
-Building context                       & 2 & $0.508$ & $0.507$ & $+0.000$ \\
+Area aggregates (ward, community area) & 4 & $0.978$ & $0.657$ & $+0.321$ \\
+Raw coordinates                        & 2 & $0.659$ & $0.595$ & $+0.064$ \\
+Neighbourhood LOO ($50$--$500$\,m)     & 6 & $0.722$ & $0.687$ & $+0.034$ \\
+Density counts                         & 3 & $0.694$ & $0.672$ & $+0.021$ \\
+Building context                       & 2 & $0.508$ & $0.506$ & $+0.001$ \\
 \bottomrule
 \end{tabular}
 \caption{Inflation by feature family, gradient boosting. Administrative
@@ -328,8 +349,17 @@ aggregates inflate an order of magnitude more than proximity features.}
 \label{tab:ablation}
 \end{table}
 
-Table~\ref{tab:ablation} localises the leak to administrative aggregates. Four
-features alone reach AUC $0.979$ under random splits and $0.642$ under blocked
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.78\textwidth]{../outputs/figures/fig3_feature_ablation.pdf}
+\caption{AUC inflation by feature family. Administrative aggregates dominate;
+proximity features contribute little.}
+\label{fig:ablation}
+\end{figure}
+
+Table~\ref{tab:ablation} and Figure~\ref{fig:ablation} localise the leak to
+administrative aggregates. Four
+features alone reach AUC $0.978$ under random splits and $0.657$ under blocked
 splits. Proximity features---the expected culprit---contribute little.
 
 The mechanism is group identity rather than distance. A leave-one-out mean over a
@@ -355,13 +385,65 @@ $500$\,m, against a focal difference of $+1.99$ tenants. Neighbours of
 high-turnover addresses are elevated by roughly $5\%$; the addresses themselves
 by roughly $176\%$.
 
-Discrete-time survival over renewal cycles shows tenancies at these locations
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{../outputs/figures/fig5_neighbour_decay.pdf}
+\caption{Difference in mean tenant count between high-turnover locations and the
+remainder, by neighbourhood radius, against a permutation null that shuffles
+labels within community areas. The focal difference exceeds the neighbour
+difference by an order of magnitude.}
+\label{fig:decay}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{../outputs/figures/fig4_survival.pdf}
+\caption{Discrete-time survival and per-cycle hazard over licence renewal
+cycles. Renewal cycles are used in place of elapsed days because duration is
+quantized to licence terms.}
+\label{fig:survival}
+\end{figure}
+
+Discrete-time survival over renewal cycles (Figure~\ref{fig:survival}) shows
+tenancies at these locations
 ending faster at every stage: first-cycle hazard $0.337$ against $0.233$, and
 survival to the eighth cycle of $0.119$ against $0.278$. The hazard ratio is
 approximately constant across cycles, consistent with proportional hazards.
 
-Context predicts the label only weakly (AUC $0.712$, AP $2.5\times$ base rate).
+Context predicts the label only weakly (AUC $0.693$, AP $2.3\times$ base rate).
 Most excess turnover is therefore not explained by observable surroundings.
+
+\subsection{Sensitivity to the target definition}
+
+\begin{table}[t]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+ & Count & Rate & Excess \\
+\midrule
+Count ($\geq 4$ tenants)        & $1.000$ & $0.187$ & $0.193$ \\
+Rate (tenants per decade, top $5\%$) & $0.187$ & $1.000$ & $0.632$ \\
+Excess (model residual, top $5\%$)   & $0.193$ & $0.632$ & $1.000$ \\
+\bottomrule
+\end{tabular}
+\caption{Jaccard overlap between the sets of locations flagged by three target
+definitions.}
+\label{tab:definitions}
+\end{table}
+
+Table~\ref{tab:definitions} reports agreement between the three definitions.
+The exposure-adjusted definitions overlap substantially (Jaccard $0.632$), but
+the unadjusted count-based definition overlaps both only weakly ($0.187$,
+$0.193$). This is a genuine limitation and we state it plainly: which addresses
+are called high-turnover depends materially on whether exposure and sector are
+adjusted for, and a reader who prefers a raw-count definition would be studying
+a substantially different set of locations.
+
+We note that this sensitivity concerns the substantive finding rather than the
+evaluation findings. The leakage results compare partitioning schemes holding
+the target fixed, so they are unaffected by which definition is chosen; the
+mechanism---group aggregates encoding group identity---depends on the feature
+construction, not on the label.
 
 \section{Recommendations}
 
@@ -409,13 +491,13 @@ dominant leakage channel in this task is not proximity but group-aggregate
 encoding over administrative units. Because that mechanism depends on grouping
 rather than geography, it applies to any target-encoded grouped data. On our
 task the difference between the default protocol and a correct one is AUC
-$0.971$ versus $0.712$, and a reversal of model selection.
+$0.970$ versus $0.693$, and a reversal of model selection.
 
 \section*{Reproducibility}
 
 All inputs are public domain. Code, the download utility with row-count
 verification, and the derived tenancy and location tables are released at
-\url{https://github.com/naazzarov/yelp-big-data-analysis}. The pipeline is
+\url{https://github.com/naazzarov/storefront-turnover-leakage}. The pipeline is
 deterministic given the seed reported in the repository.
 
 \bibliographystyle{plainnat}

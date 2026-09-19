@@ -1,0 +1,10 @@
+definition_a,definition_b,jaccard,n_both
+count,count,1.0,1307
+count,rate,0.18706168598826392,1307
+count,excess,0.19282974328710534,1307
+rate,count,0.18706168598826392,1307
+rate,rate,1.0,6987
+rate,excess,0.6316974869606449,5329
+excess,count,0.19282974328710534,1307
+excess,rate,0.6316974869606449,5329
+excess,excess,1.0,6778
