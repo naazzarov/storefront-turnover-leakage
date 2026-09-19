@@ -172,28 +172,63 @@ def fig_survival(surv: pd.DataFrame, *, label_col: str = "is_cursed") -> None:
 
 
 def fig_neighbour_decay(decay: pd.DataFrame) -> None:
-    """Focal effect against neighbour effect by radius."""
-    fig, ax = plt.subplots(figsize=(5.2, 2.6))
+    """Focal effect against neighbour effect by radius, on a broken axis.
 
-    ax.plot(decay["radius_m"], decay["observed"], "o-", color=C_BLOCKED,
-            lw=1.5, ms=4.5, label="observed difference")
-    ax.plot(decay["radius_m"], decay["null_mean"], "s--", color=C_NEUTRAL,
-            lw=1.2, ms=3.5, label="within-area permutation null")
-    ax.fill_between(
+    The quantities differ by more than an order of magnitude: the focal
+    difference is about 2 tenants while neighbour differences are between 0.04
+    and 0.10. On one linear axis the neighbour curves collapse onto the floor
+    and their decay -- which is the informative part -- becomes invisible. A
+    broken axis keeps the magnitude comparison legible while giving the small
+    values room to be read.
+    """
+    focal = decay["focal_difference"].iloc[0]
+
+    fig, (top, bot) = plt.subplots(
+        2, 1, figsize=(5.6, 3.4), sharex=True,
+        gridspec_kw={"height_ratios": [1, 2.6], "hspace": 0.08},
+    )
+
+    # Upper segment: the focal effect alone.
+    top.axhline(focal, color=C_RANDOM, ls="-.", lw=1.5)
+    top.annotate(f"the address itself: {focal:+.2f} tenants",
+                 xy=(decay["radius_m"].iloc[0], focal), xytext=(0, 5),
+                 textcoords="offset points", fontsize=8, color=C_RANDOM)
+    top.set_ylim(focal - 0.18, focal + 0.30)
+    top.set_yticks([round(focal, 1)])
+
+    # Lower segment: neighbour differences and the permutation null.
+    bot.fill_between(
         decay["radius_m"],
         decay["null_mean"] - 2 * decay["null_std"],
         decay["null_mean"] + 2 * decay["null_std"],
-        color=C_NEUTRAL, alpha=0.18, lw=0,
+        color=C_NEUTRAL, alpha=0.20, lw=0, label="null $\\pm 2$ s.d.",
     )
+    bot.plot(decay["radius_m"], decay["null_mean"], "s--", color=C_NEUTRAL,
+             lw=1.2, ms=3.5, label="within-area permutation null")
+    bot.plot(decay["radius_m"], decay["observed"], "o-", color=C_BLOCKED,
+             lw=1.6, ms=5, label="observed difference")
 
-    focal = decay["focal_difference"].iloc[0]
-    ax.axhline(focal, color=C_RANDOM, ls="-.", lw=1.3)
-    ax.annotate(f"focal location: {focal:+.2f} tenants",
-                xy=(decay["radius_m"].iloc[-1], focal), xytext=(-4, -11),
-                textcoords="offset points", ha="right", fontsize=7.5, color=C_RANDOM)
+    for _, row in decay.iterrows():
+        bot.annotate(f"{row['observed']:.3f}",
+                     xy=(row["radius_m"], row["observed"]), xytext=(0, 7),
+                     textcoords="offset points", ha="center",
+                     fontsize=7, color=C_BLOCKED)
 
-    ax.set_xlabel("neighbourhood radius (m)")
-    ax.set_ylabel("difference in mean tenants")
-    ax.set_title("The effect is concentrated at the address, not the street")
-    ax.legend(fontsize=7.5, loc="center right")
+    bot.set_ylim(0, max(decay["observed"]) * 1.55)
+    bot.set_xlabel("neighbourhood radius (m)")
+    bot.set_xticks(decay["radius_m"].tolist())
+    bot.legend(fontsize=7.5, loc="upper right")
+
+    # Hide the facing spines and draw the break marks across them.
+    top.spines["bottom"].set_visible(False)
+    bot.spines["top"].set_visible(False)
+    top.tick_params(bottom=False)
+    kw = dict(marker=[(-1, -0.6), (1, 0.6)], markersize=7, lw=0,
+              color="k", mec="k", mew=1, clip_on=False)
+    top.plot([0, 1], [0, 0], transform=top.transAxes, **kw)
+    bot.plot([0, 1], [1, 1], transform=bot.transAxes, **kw)
+
+    fig.supylabel("difference in mean tenants", fontsize=9, x=0.015)
+    top.set_title("The effect is concentrated at the address, not the street",
+                  fontsize=10)
     _save(fig, "fig5_neighbour_decay")
