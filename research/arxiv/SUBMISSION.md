@@ -17,9 +17,8 @@ figure PDFs, flat, no subdirectories).
       It currently carries only an email address.
 - [ ] **Read the paper.** Your name is on it. Every number is reproducible with
       `python3 run_experiments.py`, so anything you doubt can be checked.
-- [ ] **Search for prior art** on target-encoding leakage under grouped
-      cross-validation (suggested queries below). This is the single claim most
-      exposed to a reviewer finding earlier work.
+- [x] **Prior-art search** — done 2026-09-20; see the section near the end. It
+      materially changed the paper's framing.
 
 ---
 
@@ -44,7 +43,7 @@ task rather than proposing an urban method.
 ## Title
 
 ```
-Group-Aggregate Features Defeat Spatial Cross-Validation: A Case Study in Urban Storefront Turnover
+Spatial Blocking Does Not Prevent Group-Aggregate Leakage: A Case Study in Urban Turnover Prediction
 ```
 
 ## Abstract
@@ -52,38 +51,42 @@ Group-Aggregate Features Defeat Spatial Cross-Validation: A Case Study in Urban 
 Paste the text below (arXiv accepts plain text; keep the line breaks loose).
 
 ```
-Spatially blocked cross-validation is the standard defence against optimistic
-performance estimates on geographic data. We show that it fails silently when
-block size is not chosen with respect to the spatial support of the features,
-and that the dominant leakage channel is not fine-grained spatial autocorrelation
-but group-aggregate features, that is, leave-one-out target encodings over
-administrative units.
+Two evaluation hazards are individually well documented: spatially blocked
+cross-validation is required for geographic data, with block size the dominant
+choice (Roberts et al. 2017; Ploton et al. 2020; Stock 2025), and target-encoded
+categorical features leak unless folds respect the encoding groups
+(Micci-Barreca 2001; Prokhorenkova et al. 2018). We show that these interact in a
+way that defeats the standard remedy, and that the interaction is easy to miss
+because it produces no visible symptom.
 
 On a task built from 1.21 million City of Chicago business licences spanning
 1995-2026, we predict which of 135,553 storefronts exhibit excess tenant
 turnover. Random k-fold cross-validation reports ROC AUC 0.970 and average
-precision 0.756 (15.1x over the base rate). Spatially blocked cross-validation
-over the same data and model reports 0.693 and 0.114 (2.3x), an average-precision
-inflation of more than sixfold.
+precision 0.756 (15.1x the base rate); partitioning by administrative unit
+reports 0.693 and 0.114 (2.3x).
 
-Three findings follow. First, blocking at 100 m to 1 km is statistically
-indistinguishable from no blocking at all (AUC 0.971-0.977); performance
-collapses only once blocks approach administrative scale. Practitioners who adopt
-spatial cross-validation but choose small blocks obtain inflated numbers carrying
-a methodologically respectable label. Second, leakage is concentrated in model
-families by flexibility: logistic regression inflates by 0.013 AUC while gradient
-boosting inflates by 0.277. Under honest evaluation all families are equivalent
-(0.62-0.70), so random splits corrupt model selection, not merely model
-assessment. Third, ablation localises the leak: ward and community-area
-aggregates inflate by 0.321 AUC against 0.034 for 50-500 m neighbourhood
-features. Because a leave-one-out group mean is near-constant within its group,
-it acts as a group identifier, and the evaluation split must align with the
-grouping used to construct it.
+Our contribution is to locate the channel. Ablation shows the inflation is
+carried almost entirely by group aggregates - ward and community-area
+leave-one-out means, which inflate AUC by 0.321 - rather than by proximity:
+neighbourhood features computed at 50-500 m inflate by only 0.034. Because the
+channel is group membership rather than distance, spatial blocking does not close
+it at any scale a practitioner would plausibly select. Blocks of 100 m to 1 km
+leave performance statistically unchanged (AUC 0.971-0.977 against 0.970 for
+random splits); only blocks approaching the size of the administrative units
+themselves recover the honest estimate. A practitioner following current guidance
+- choosing block size from the autocorrelation range of the predictors - would
+therefore still obtain an inflated estimate here, because the relevant scale is
+set by the aggregation units, not by the autocorrelation of the data.
 
-The substantive result survives honest evaluation: excess turnover concentrates
-at individual addresses rather than districts, with neighbours only weakly
-elevated and tenancies failing roughly 1.5x faster per renewal cycle. All inputs
-are public domain and the pipeline is released in full.
+We confirm in this domain the known result that leakage equalises under honest
+evaluation: inflation ranges from 0.013 AUC for logistic regression to 0.277 for
+gradient boosting, while blocked scores for all families fall between 0.62 and
+0.70, so random splits corrupt model selection as well as assessment.
+
+The substantive finding survives honest evaluation and is, to our knowledge, new:
+excess turnover concentrates at individual addresses rather than districts, with
+neighbours only weakly elevated and tenancies failing roughly 1.5x faster per
+renewal cycle. All inputs are public domain and the pipeline is released in full.
 ```
 
 ## Comments field
@@ -134,24 +137,32 @@ following working day.
 
 ---
 
-## Suggested prior-art searches
+## Prior-art search: completed 2026-09-20
 
-Run these before submitting. If any returns a paper stating the group-aggregate
-result directly, the novelty framing in Section 2 needs adjusting — which is
-easier to do now than after posting.
+The search was run and **changed the paper**. Findings:
 
-- "target encoding" leakage cross-validation grouped
-- "leave-one-out encoding" leakage grouped splits
-- spatial cross-validation "block size" feature scale
-- group k-fold target encoding optimistic bias
-- mean target encoding "data leakage" evaluation protocol
+- **Block size matters most** is already published: Stock (2025), *Choosing blocks
+  for spatial cross-validation*, Frontiers in Remote Sensing, across 1,426
+  synthetic datasets. blockCV has estimated predictor autocorrelation range for
+  block-size selection since 2019.
+- **Folds must align with encoding groups** is documented, including in
+  scikit-learn's `TargetEncoder` docs (group routing to `GroupKFold`), and
+  Cerqua, Letta & Pinto (2024) name spatial leakage as cross-sectional leakage
+  with aggregate panel data.
+- **Leakage equalises model families** was shown by Rosenblatt et al. (2024) in
+  Nature Communications for connectome models.
 
-Known related work already cited: Roberts et al. (2017), Ploton et al. (2020),
-Valavi et al. (2019) on spatial cross-validation; Kaufman et al. (2012) and
-Kapoor & Narayanan (2023) on leakage; Micci-Barreca (2001) and Prokhorenkova et
-al. (2018) on target encoding.
+The paper was accordingly reframed. It no longer claims to discover any of the
+above; all three are cited as established. The retained claim is narrower: the
+two remedies are not interchangeable, and where features aggregate over
+administrative units, spatial blocking at any plausible scale fails because the
+governing scale is the aggregation unit rather than the autocorrelation range.
+The ablation separating group aggregates (+0.321 AUC) from proximity features
+(+0.034) is the evidence for that claim.
 
----
+If a reviewer finds work stating that specific result, the honest response is to
+retitle toward the substantive urban finding, which the search found no prior
+work on.
 
 ## After posting
 
