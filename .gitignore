@@ -46,3 +46,16 @@ env/
 # OS
 .DS_Store
 Thumbs.db
+
+# Benchmark generated artifacts
+benchmark/data/
+benchmark/report.md
+
+# Research pipeline artifacts.
+# Yelp's data licence (Sections 4.A/4.E) forbids redistributing the dataset or
+# derived record-level extracts, so nothing built from it may be committed.
+research/work/
+research/fixtures/synthetic/
+research/outputs/figures/*.png
+research/outputs/figures/*.pdf
+research/outputs/tables/*.csv

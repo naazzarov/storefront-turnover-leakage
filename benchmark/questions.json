@@ -1,0 +1,712 @@
+{
+  "meta": {
+    "name": "Yelp-SQL",
+    "version": "0.1.0",
+    "description": "A hand-written natural-language-to-SQL benchmark over a Yelp business_small schema (synthetic data mirroring the real schema). Questions span filtering, ranking, aggregation, grouping, and combined queries.",
+    "schema": "business_small(business_id VARCHAR, name VARCHAR, city VARCHAR, state VARCHAR, stars FLOAT, review_count INTEGER, categories VARCHAR)",
+    "categories": ["filter", "ranking", "aggregation", "grouping", "combined"],
+    "difficulties": ["easy", "medium", "hard"]
+  },
+  "questions": [
+    {
+      "id": 1,
+      "category": "filter",
+      "difficulty": "easy",
+      "question": "How many businesses are located in Philadelphia?",
+      "gold_sql": "SELECT COUNT(*) FROM business_small WHERE city = 'Philadelphia'"
+    },
+    {
+      "id": 2,
+      "category": "filter",
+      "difficulty": "easy",
+      "question": "List the names of all businesses in Arizona.",
+      "gold_sql": "SELECT name FROM business_small WHERE state = 'AZ'"
+    },
+    {
+      "id": 3,
+      "category": "filter",
+      "difficulty": "easy",
+      "question": "Which businesses have a 5.0 star rating?",
+      "gold_sql": "SELECT name FROM business_small WHERE stars = 5.0"
+    },
+    {
+      "id": 4,
+      "category": "filter",
+      "difficulty": "easy",
+      "question": "What businesses are located in Toronto?",
+      "gold_sql": "SELECT name FROM business_small WHERE city = 'Toronto'"
+    },
+    {
+      "id": 5,
+      "category": "filter",
+      "difficulty": "easy",
+      "question": "Find all businesses with at least 1000 reviews.",
+      "gold_sql": "SELECT name, review_count FROM business_small WHERE review_count >= 1000"
+    },
+    {
+      "id": 6,
+      "category": "filter",
+      "difficulty": "easy",
+      "question": "List the restaurants (businesses whose categories include Restaurants).",
+      "gold_sql": "SELECT name FROM business_small WHERE categories LIKE '%Restaurants%'"
+    },
+    {
+      "id": 7,
+      "category": "filter",
+      "difficulty": "medium",
+      "question": "Which businesses in Florida have a rating below 3 stars?",
+      "gold_sql": "SELECT name, stars FROM business_small WHERE state = 'FL' AND stars < 3.0"
+    },
+    {
+      "id": 8,
+      "category": "filter",
+      "difficulty": "medium",
+      "question": "Find bars in Phoenix with a rating of at least 4 stars.",
+      "gold_sql": "SELECT name, stars FROM business_small WHERE categories LIKE '%Bars%' AND city = 'Phoenix' AND stars >= 4.0"
+    },
+    {
+      "id": 9,
+      "category": "filter",
+      "difficulty": "medium",
+      "question": "List cafes in Philadelphia with more than 100 reviews.",
+      "gold_sql": "SELECT name, review_count FROM business_small WHERE categories LIKE '%Cafes%' AND city = 'Philadelphia' AND review_count > 100"
+    },
+    {
+      "id": 10,
+      "category": "filter",
+      "difficulty": "hard",
+      "question": "Which businesses are in Pennsylvania or Nevada and have at least 4 stars?",
+      "gold_sql": "SELECT name, state, stars FROM business_small WHERE state IN ('PA', 'NV') AND stars >= 4.0"
+    },
+    {
+      "id": 11,
+      "category": "ranking",
+      "difficulty": "easy",
+      "question": "What are the top 5 highest-rated businesses?",
+      "gold_sql": "SELECT name, stars FROM business_small ORDER BY stars DESC LIMIT 5"
+    },
+    {
+      "id": 12,
+      "category": "ranking",
+      "difficulty": "easy",
+      "question": "Which business has the most reviews?",
+      "gold_sql": "SELECT name, review_count FROM business_small ORDER BY review_count DESC LIMIT 1"
+    },
+    {
+      "id": 13,
+      "category": "ranking",
+      "difficulty": "easy",
+      "question": "List the 10 lowest-rated businesses.",
+      "gold_sql": "SELECT name, stars FROM business_small ORDER BY stars ASC LIMIT 10"
+    },
+    {
+      "id": 14,
+      "category": "ranking",
+      "difficulty": "medium",
+      "question": "What are the top 3 most-reviewed restaurants?",
+      "gold_sql": "SELECT name, review_count FROM business_small WHERE categories LIKE '%Restaurants%' ORDER BY review_count DESC LIMIT 3"
+    },
+    {
+      "id": 15,
+      "category": "ranking",
+      "difficulty": "medium",
+      "question": "List the 5 highest-rated businesses in Philadelphia.",
+      "gold_sql": "SELECT name, stars FROM business_small WHERE city = 'Philadelphia' ORDER BY stars DESC LIMIT 5"
+    },
+    {
+      "id": 16,
+      "category": "ranking",
+      "difficulty": "hard",
+      "question": "What are the top 5 highest-rated cafes in Arizona by rating and review count?",
+      "gold_sql": "SELECT name, stars, review_count FROM business_small WHERE categories LIKE '%Cafes%' AND state = 'AZ' ORDER BY stars DESC, review_count DESC LIMIT 5"
+    },
+    {
+      "id": 17,
+      "category": "aggregation",
+      "difficulty": "easy",
+      "question": "What is the average star rating of all businesses?",
+      "gold_sql": "SELECT AVG(stars) FROM business_small"
+    },
+    {
+      "id": 18,
+      "category": "aggregation",
+      "difficulty": "easy",
+      "question": "How many businesses are in the dataset?",
+      "gold_sql": "SELECT COUNT(*) FROM business_small"
+    },
+    {
+      "id": 19,
+      "category": "aggregation",
+      "difficulty": "easy",
+      "question": "What is the total number of reviews across all businesses?",
+      "gold_sql": "SELECT SUM(review_count) FROM business_small"
+    },
+    {
+      "id": 20,
+      "category": "aggregation",
+      "difficulty": "easy",
+      "question": "What is the highest rating in the dataset?",
+      "gold_sql": "SELECT MAX(stars) FROM business_small"
+    },
+    {
+      "id": 21,
+      "category": "aggregation",
+      "difficulty": "easy",
+      "question": "What is the lowest review count in the dataset?",
+      "gold_sql": "SELECT MIN(review_count) FROM business_small"
+    },
+    {
+      "id": 22,
+      "category": "aggregation",
+      "difficulty": "medium",
+      "question": "What is the average number of reviews for businesses with at least 4 stars?",
+      "gold_sql": "SELECT AVG(review_count) FROM business_small WHERE stars >= 4.0"
+    },
+    {
+      "id": 23,
+      "category": "aggregation",
+      "difficulty": "medium",
+      "question": "How many distinct cities are represented in the dataset?",
+      "gold_sql": "SELECT COUNT(DISTINCT city) FROM business_small"
+    },
+    {
+      "id": 24,
+      "category": "aggregation",
+      "difficulty": "hard",
+      "question": "What is the average rating of businesses that have more reviews than the overall average?",
+      "gold_sql": "SELECT AVG(stars) FROM business_small WHERE review_count > (SELECT AVG(review_count) FROM business_small)"
+    },
+    {
+      "id": 25,
+      "category": "grouping",
+      "difficulty": "easy",
+      "question": "How many businesses are in each city?",
+      "gold_sql": "SELECT city, COUNT(*) FROM business_small GROUP BY city"
+    },
+    {
+      "id": 26,
+      "category": "grouping",
+      "difficulty": "easy",
+      "question": "What is the average rating for each state?",
+      "gold_sql": "SELECT state, AVG(stars) FROM business_small GROUP BY state"
+    },
+    {
+      "id": 27,
+      "category": "grouping",
+      "difficulty": "medium",
+      "question": "Which city has the most businesses?",
+      "gold_sql": "SELECT city, COUNT(*) FROM business_small GROUP BY city ORDER BY COUNT(*) DESC LIMIT 1"
+    },
+    {
+      "id": 28,
+      "category": "grouping",
+      "difficulty": "medium",
+      "question": "What is the total review count for each state, ordered from highest to lowest?",
+      "gold_sql": "SELECT state, SUM(review_count) FROM business_small GROUP BY state ORDER BY SUM(review_count) DESC"
+    },
+    {
+      "id": 29,
+      "category": "grouping",
+      "difficulty": "medium",
+      "question": "How many businesses are there in each state with an average rating above 3 stars?",
+      "gold_sql": "SELECT state, COUNT(*) FROM business_small WHERE stars > 3.0 GROUP BY state"
+    },
+    {
+      "id": 30,
+      "category": "grouping",
+      "difficulty": "hard",
+      "question": "Which cities have more than 100 businesses?",
+      "gold_sql": "SELECT city, COUNT(*) FROM business_small GROUP BY city HAVING COUNT(*) > 100"
+    },
+    {
+      "id": 31,
+      "category": "combined",
+      "difficulty": "medium",
+      "question": "What is the average rating of restaurants in Philadelphia?",
+      "gold_sql": "SELECT AVG(stars) FROM business_small WHERE categories LIKE '%Restaurants%' AND city = 'Philadelphia'"
+    },
+    {
+      "id": 32,
+      "category": "combined",
+      "difficulty": "medium",
+      "question": "How many bars are in Tampa with at least 4 stars?",
+      "gold_sql": "SELECT COUNT(*) FROM business_small WHERE categories LIKE '%Bars%' AND city = 'Tampa' AND stars >= 4.0"
+    },
+    {
+      "id": 33,
+      "category": "combined",
+      "difficulty": "medium",
+      "question": "What is the top-rated cafe in Phoenix?",
+      "gold_sql": "SELECT name, stars FROM business_small WHERE categories LIKE '%Cafes%' AND city = 'Phoenix' ORDER BY stars DESC LIMIT 1"
+    },
+    {
+      "id": 34,
+      "category": "combined",
+      "difficulty": "hard",
+      "question": "What is the average rating of businesses in each city that have more than 500 reviews?",
+      "gold_sql": "SELECT city, AVG(stars) FROM business_small WHERE review_count > 500 GROUP BY city"
+    },
+    {
+      "id": 35,
+      "category": "combined",
+      "difficulty": "hard",
+      "question": "Which city has the highest average rating among restaurants?",
+      "gold_sql": "SELECT city, AVG(stars) FROM business_small WHERE categories LIKE '%Restaurants%' GROUP BY city ORDER BY AVG(stars) DESC LIMIT 1"
+    },
+    {
+      "id": 36,
+      "category": "filter",
+      "difficulty": "easy",
+      "question": "How many businesses are rated exactly 4.0 stars?",
+      "gold_sql": "SELECT COUNT(*) FROM business_small WHERE stars = 4.0"
+    },
+    {
+      "id": 37,
+      "category": "filter",
+      "difficulty": "medium",
+      "question": "List shopping businesses with at least 100 reviews.",
+      "gold_sql": "SELECT name, review_count FROM business_small WHERE categories LIKE '%Shopping%' AND review_count >= 100"
+    },
+    {
+      "id": 38,
+      "category": "filter",
+      "difficulty": "hard",
+      "question": "Find businesses whose name starts with 'Golden'.",
+      "gold_sql": "SELECT name FROM business_small WHERE name LIKE 'Golden%'"
+    },
+    {
+      "id": 39,
+      "category": "ranking",
+      "difficulty": "medium",
+      "question": "List the top 5 businesses by review count in Toronto.",
+      "gold_sql": "SELECT name, review_count FROM business_small WHERE city = 'Toronto' ORDER BY review_count DESC LIMIT 5"
+    },
+    {
+      "id": 40,
+      "category": "aggregation",
+      "difficulty": "medium",
+      "question": "What is the total review count for all businesses in Florida?",
+      "gold_sql": "SELECT SUM(review_count) FROM business_small WHERE state = 'FL'"
+    },
+    {
+      "id": 41,
+      "category": "grouping",
+      "difficulty": "medium",
+      "question": "What is the maximum rating in each city?",
+      "gold_sql": "SELECT city, MAX(stars) FROM business_small GROUP BY city"
+    },
+    {
+      "id": 42,
+      "category": "combined",
+      "difficulty": "hard",
+      "question": "How many businesses are there in each category type that have a rating of at least 4 stars?",
+      "gold_sql": "SELECT categories, COUNT(*) FROM business_small WHERE stars >= 4.0 GROUP BY categories"
+    },
+    {
+      "id": 43,
+      "category": "filter",
+      "difficulty": "easy",
+      "question": "Which businesses have fewer than 50 reviews?",
+      "gold_sql": "SELECT name, review_count FROM business_small WHERE review_count < 50"
+    },
+    {
+      "id": 44,
+      "category": "aggregation",
+      "difficulty": "easy",
+      "question": "How many businesses are there in Las Vegas?",
+      "gold_sql": "SELECT COUNT(*) FROM business_small WHERE city = 'Las Vegas'"
+    },
+    {
+      "id": 45,
+      "category": "ranking",
+      "difficulty": "easy",
+      "question": "List all businesses ordered by name alphabetically.",
+      "gold_sql": "SELECT name FROM business_small ORDER BY name ASC"
+    },
+    {
+      "id": 46,
+      "category": "grouping",
+      "difficulty": "medium",
+      "question": "What is the average review count per city?",
+      "gold_sql": "SELECT city, AVG(review_count) FROM business_small GROUP BY city"
+    },
+    {
+      "id": 47,
+      "category": "combined",
+      "difficulty": "medium",
+      "question": "Which state has the most restaurants?",
+      "gold_sql": "SELECT state, COUNT(*) FROM business_small WHERE categories LIKE '%Restaurants%' GROUP BY state ORDER BY COUNT(*) DESC LIMIT 1"
+    },
+    {
+      "id": 48,
+      "category": "filter",
+      "difficulty": "medium",
+      "question": "List all nightlife businesses in Las Vegas.",
+      "gold_sql": "SELECT name FROM business_small WHERE categories LIKE '%Nightlife%' AND city = 'Las Vegas'"
+    },
+    {
+      "id": 49,
+      "category": "aggregation",
+      "difficulty": "hard",
+      "question": "What is the median-like average rating difference between 5-star businesses and all others?",
+      "gold_sql": "SELECT (SELECT AVG(stars) FROM business_small WHERE stars = 5.0) - (SELECT AVG(stars) FROM business_small WHERE stars < 5.0)"
+    },
+    {
+      "id": 50,
+      "category": "ranking",
+      "difficulty": "hard",
+      "question": "List the bottom 5 businesses by rating that still have at least 200 reviews.",
+      "gold_sql": "SELECT name, stars, review_count FROM business_small WHERE review_count >= 200 ORDER BY stars ASC LIMIT 5"
+    },
+    {
+      "id": 51,
+      "category": "filter",
+      "difficulty": "easy",
+      "question": "List businesses with a rating between 3 and 4 stars.",
+      "gold_sql": "SELECT name, stars FROM business_small WHERE stars BETWEEN 3.0 AND 4.0"
+    },
+    {
+      "id": 52,
+      "category": "filter",
+      "difficulty": "easy",
+      "question": "Which businesses are located in Pennsylvania or Arizona?",
+      "gold_sql": "SELECT name, state FROM business_small WHERE state IN ('PA', 'AZ')"
+    },
+    {
+      "id": 53,
+      "category": "filter",
+      "difficulty": "medium",
+      "question": "Find businesses whose name contains the word 'Cafe'.",
+      "gold_sql": "SELECT name FROM business_small WHERE name LIKE '%Cafe%'"
+    },
+    {
+      "id": 54,
+      "category": "filter",
+      "difficulty": "medium",
+      "question": "List restaurants in Phoenix that are not fast food.",
+      "gold_sql": "SELECT name FROM business_small WHERE categories LIKE '%Restaurants%' AND city = 'Phoenix' AND categories NOT LIKE '%Fast Food%'"
+    },
+    {
+      "id": 55,
+      "category": "filter",
+      "difficulty": "medium",
+      "question": "Which businesses have a review count between 500 and 1000?",
+      "gold_sql": "SELECT name, review_count FROM business_small WHERE review_count BETWEEN 500 AND 1000"
+    },
+    {
+      "id": 56,
+      "category": "filter",
+      "difficulty": "easy",
+      "question": "List all beauty and spa businesses.",
+      "gold_sql": "SELECT name FROM business_small WHERE categories LIKE '%Beauty & Spas%'"
+    },
+    {
+      "id": 57,
+      "category": "filter",
+      "difficulty": "medium",
+      "question": "Which automotive businesses are in Tucson?",
+      "gold_sql": "SELECT name FROM business_small WHERE categories LIKE '%Automotive%' AND city = 'Tucson'"
+    },
+    {
+      "id": 58,
+      "category": "filter",
+      "difficulty": "easy",
+      "question": "How many businesses are there in Ontario?",
+      "gold_sql": "SELECT COUNT(*) FROM business_small WHERE state = 'ON'"
+    },
+    {
+      "id": 59,
+      "category": "filter",
+      "difficulty": "hard",
+      "question": "Find businesses in Pittsburgh or Tampa with at least 4 stars and more than 200 reviews.",
+      "gold_sql": "SELECT name, city, stars, review_count FROM business_small WHERE city IN ('Pittsburgh', 'Tampa') AND stars >= 4.0 AND review_count > 200"
+    },
+    {
+      "id": 60,
+      "category": "ranking",
+      "difficulty": "easy",
+      "question": "List the top 10 businesses by review count.",
+      "gold_sql": "SELECT name, review_count FROM business_small ORDER BY review_count DESC LIMIT 10"
+    },
+    {
+      "id": 61,
+      "category": "ranking",
+      "difficulty": "medium",
+      "question": "What are the 3 lowest-reviewed businesses in Pennsylvania?",
+      "gold_sql": "SELECT name, review_count FROM business_small WHERE state = 'PA' ORDER BY review_count ASC LIMIT 3"
+    },
+    {
+      "id": 62,
+      "category": "ranking",
+      "difficulty": "medium",
+      "question": "List the top 5 businesses in Las Vegas by rating.",
+      "gold_sql": "SELECT name, stars FROM business_small WHERE city = 'Las Vegas' ORDER BY stars DESC LIMIT 5"
+    },
+    {
+      "id": 63,
+      "category": "ranking",
+      "difficulty": "hard",
+      "question": "List the top 5 businesses by rating, and for ties by review count.",
+      "gold_sql": "SELECT name, stars, review_count FROM business_small ORDER BY stars DESC, review_count DESC LIMIT 5"
+    },
+    {
+      "id": 64,
+      "category": "aggregation",
+      "difficulty": "easy",
+      "question": "What is the average star rating rounded to two decimal places?",
+      "gold_sql": "SELECT ROUND(AVG(stars), 2) FROM business_small"
+    },
+    {
+      "id": 65,
+      "category": "aggregation",
+      "difficulty": "easy",
+      "question": "How many businesses have a rating above 4 stars?",
+      "gold_sql": "SELECT COUNT(*) FROM business_small WHERE stars > 4.0"
+    },
+    {
+      "id": 66,
+      "category": "aggregation",
+      "difficulty": "medium",
+      "question": "What is the total review count for restaurants?",
+      "gold_sql": "SELECT SUM(review_count) FROM business_small WHERE categories LIKE '%Restaurants%'"
+    },
+    {
+      "id": 67,
+      "category": "aggregation",
+      "difficulty": "medium",
+      "question": "What is the highest review count in Phoenix?",
+      "gold_sql": "SELECT MAX(review_count) FROM business_small WHERE city = 'Phoenix'"
+    },
+    {
+      "id": 68,
+      "category": "aggregation",
+      "difficulty": "easy",
+      "question": "How many distinct states are represented in the dataset?",
+      "gold_sql": "SELECT COUNT(DISTINCT state) FROM business_small"
+    },
+    {
+      "id": 69,
+      "category": "aggregation",
+      "difficulty": "hard",
+      "question": "What is the average rating of businesses that have fewer reviews than the overall average?",
+      "gold_sql": "SELECT AVG(stars) FROM business_small WHERE review_count < (SELECT AVG(review_count) FROM business_small)"
+    },
+    {
+      "id": 70,
+      "category": "grouping",
+      "difficulty": "medium",
+      "question": "What is the average rating per city for cities with at least 90 businesses?",
+      "gold_sql": "SELECT city, AVG(stars) FROM business_small GROUP BY city HAVING COUNT(*) >= 90"
+    },
+    {
+      "id": 71,
+      "category": "grouping",
+      "difficulty": "medium",
+      "question": "How many businesses are in each category, ordered by count descending?",
+      "gold_sql": "SELECT categories, COUNT(*) FROM business_small GROUP BY categories ORDER BY COUNT(*) DESC"
+    },
+    {
+      "id": 72,
+      "category": "grouping",
+      "difficulty": "easy",
+      "question": "What is the minimum review count per state?",
+      "gold_sql": "SELECT state, MIN(review_count) FROM business_small GROUP BY state"
+    },
+    {
+      "id": 73,
+      "category": "grouping",
+      "difficulty": "medium",
+      "question": "Which state has the highest total review count?",
+      "gold_sql": "SELECT state, SUM(review_count) FROM business_small GROUP BY state ORDER BY SUM(review_count) DESC LIMIT 1"
+    },
+    {
+      "id": 74,
+      "category": "grouping",
+      "difficulty": "hard",
+      "question": "Which states have more than 150 businesses?",
+      "gold_sql": "SELECT state, COUNT(*) FROM business_small GROUP BY state HAVING COUNT(*) > 150"
+    },
+    {
+      "id": 75,
+      "category": "combined",
+      "difficulty": "medium",
+      "question": "What is the average rating of restaurants in each city?",
+      "gold_sql": "SELECT city, AVG(stars) FROM business_small WHERE categories LIKE '%Restaurants%' GROUP BY city"
+    },
+    {
+      "id": 76,
+      "category": "combined",
+      "difficulty": "medium",
+      "question": "Which city has the most bars?",
+      "gold_sql": "SELECT city, COUNT(*) FROM business_small WHERE categories LIKE '%Bars%' GROUP BY city ORDER BY COUNT(*) DESC LIMIT 1"
+    },
+    {
+      "id": 77,
+      "category": "combined",
+      "difficulty": "hard",
+      "question": "List the top 3 highest-rated shopping businesses in Florida.",
+      "gold_sql": "SELECT name, stars FROM business_small WHERE categories LIKE '%Shopping%' AND state = 'FL' ORDER BY stars DESC LIMIT 3"
+    },
+    {
+      "id": 78,
+      "category": "combined",
+      "difficulty": "hard",
+      "question": "What is the average review count of businesses in each state with at least 100 businesses?",
+      "gold_sql": "SELECT state, AVG(review_count) FROM business_small GROUP BY state HAVING COUNT(*) >= 100"
+    },
+    {
+      "id": 79,
+      "category": "combined",
+      "difficulty": "hard",
+      "question": "Which businesses have more reviews than the average review count?",
+      "gold_sql": "SELECT name, review_count FROM business_small WHERE review_count > (SELECT AVG(review_count) FROM business_small)"
+    },
+    {
+      "id": 80,
+      "category": "combined",
+      "difficulty": "hard",
+      "question": "How many businesses have a rating above the average rating?",
+      "gold_sql": "SELECT COUNT(*) FROM business_small WHERE stars > (SELECT AVG(stars) FROM business_small)"
+    },
+    {
+      "id": 81,
+      "category": "grouping",
+      "difficulty": "hard",
+      "question": "List cities where the average rating is above 3.5.",
+      "gold_sql": "SELECT city FROM business_small GROUP BY city HAVING AVG(stars) > 3.5"
+    },
+    {
+      "id": 82,
+      "category": "filter",
+      "difficulty": "medium",
+      "question": "Which businesses in Florida have a rating of at least 4.5?",
+      "gold_sql": "SELECT name, stars FROM business_small WHERE state = 'FL' AND stars >= 4.5"
+    },
+    {
+      "id": 83,
+      "category": "filter",
+      "difficulty": "hard",
+      "question": "Find fast food restaurants with fewer than 100 reviews in Las Vegas.",
+      "gold_sql": "SELECT name, review_count FROM business_small WHERE categories LIKE '%Fast Food%' AND city = 'Las Vegas' AND review_count < 100"
+    },
+    {
+      "id": 84,
+      "category": "ranking",
+      "difficulty": "medium",
+      "question": "List all businesses in Tampa ordered by review count descending.",
+      "gold_sql": "SELECT name, review_count FROM business_small WHERE city = 'Tampa' ORDER BY review_count DESC"
+    },
+    {
+      "id": 85,
+      "category": "aggregation",
+      "difficulty": "medium",
+      "question": "What is the average review count of bars?",
+      "gold_sql": "SELECT AVG(review_count) FROM business_small WHERE categories LIKE '%Bars%'"
+    },
+    {
+      "id": 86,
+      "category": "grouping",
+      "difficulty": "easy",
+      "question": "How many businesses are in each state?",
+      "gold_sql": "SELECT state, COUNT(*) FROM business_small GROUP BY state"
+    },
+    {
+      "id": 87,
+      "category": "combined",
+      "difficulty": "medium",
+      "question": "What is the lowest rating among restaurants in Toronto?",
+      "gold_sql": "SELECT MIN(stars) FROM business_small WHERE categories LIKE '%Restaurants%' AND city = 'Toronto'"
+    },
+    {
+      "id": 88,
+      "category": "combined",
+      "difficulty": "hard",
+      "question": "Which city has the highest average rating among cafes?",
+      "gold_sql": "SELECT city, AVG(stars) FROM business_small WHERE categories LIKE '%Cafes%' GROUP BY city ORDER BY AVG(stars) DESC LIMIT 1"
+    },
+    {
+      "id": 89,
+      "category": "filter",
+      "difficulty": "easy",
+      "question": "List businesses in Mesa.",
+      "gold_sql": "SELECT name FROM business_small WHERE city = 'Mesa'"
+    },
+    {
+      "id": 90,
+      "category": "aggregation",
+      "difficulty": "medium",
+      "question": "What is the total number of reviews for businesses in Arizona?",
+      "gold_sql": "SELECT SUM(review_count) FROM business_small WHERE state = 'AZ'"
+    },
+    {
+      "id": 91,
+      "category": "ranking",
+      "difficulty": "hard",
+      "question": "List the top 5 highest-rated bars in Pennsylvania.",
+      "gold_sql": "SELECT name, stars FROM business_small WHERE categories LIKE '%Bars%' AND state = 'PA' ORDER BY stars DESC LIMIT 5"
+    },
+    {
+      "id": 92,
+      "category": "combined",
+      "difficulty": "hard",
+      "question": "What is the average review count for each city among businesses with at least 4 stars?",
+      "gold_sql": "SELECT city, AVG(review_count) FROM business_small WHERE stars >= 4.0 GROUP BY city"
+    },
+    {
+      "id": 93,
+      "category": "filter",
+      "difficulty": "medium",
+      "question": "Which businesses have between 3 and 4 stars and are in Orlando?",
+      "gold_sql": "SELECT name, stars FROM business_small WHERE stars BETWEEN 3.0 AND 4.0 AND city = 'Orlando'"
+    },
+    {
+      "id": 94,
+      "category": "grouping",
+      "difficulty": "hard",
+      "question": "Which categories have an average rating below 3?",
+      "gold_sql": "SELECT categories, AVG(stars) FROM business_small GROUP BY categories HAVING AVG(stars) < 3.0"
+    },
+    {
+      "id": 95,
+      "category": "aggregation",
+      "difficulty": "hard",
+      "question": "What is the difference between the maximum and minimum review count?",
+      "gold_sql": "SELECT MAX(review_count) - MIN(review_count) FROM business_small"
+    },
+    {
+      "id": 96,
+      "category": "ranking",
+      "difficulty": "hard",
+      "question": "What is the name of the business with the second-highest rating?",
+      "gold_sql": "SELECT name, stars FROM business_small ORDER BY stars DESC LIMIT 1 OFFSET 1"
+    },
+    {
+      "id": 97,
+      "category": "aggregation",
+      "difficulty": "medium",
+      "question": "How many businesses have a review count of at least 1000?",
+      "gold_sql": "SELECT COUNT(*) FROM business_small WHERE review_count >= 1000"
+    },
+    {
+      "id": 98,
+      "category": "combined",
+      "difficulty": "medium",
+      "question": "What is the average rating of nightlife businesses in Las Vegas?",
+      "gold_sql": "SELECT AVG(stars) FROM business_small WHERE categories LIKE '%Nightlife%' AND city = 'Las Vegas'"
+    },
+    {
+      "id": 99,
+      "category": "filter",
+      "difficulty": "hard",
+      "question": "Find businesses whose categories include both Restaurants and Bars.",
+      "gold_sql": "SELECT name FROM business_small WHERE categories LIKE '%Restaurants%' AND categories LIKE '%Bars%'"
+    },
+    {
+      "id": 100,
+      "category": "grouping",
+      "difficulty": "medium",
+      "question": "What is the total review count per city ordered by city name?",
+      "gold_sql": "SELECT city, SUM(review_count) FROM business_small GROUP BY city ORDER BY city ASC"
+    }
+  ]
+}
