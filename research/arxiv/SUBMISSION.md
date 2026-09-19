@@ -13,8 +13,8 @@ figure PDFs, flat, no subdirectories).
       `https://github.com/naazzarov/storefront-turnover-leakage`. That repository
       is currently private, so the claim is not yet true and readers will click
       the link. Either make it public or remove the claim.
-- [ ] **Add your affiliation** to the author block in `main.tex` (line 18).
-      It currently carries only an email address.
+- [x] **Affiliation** — School of Software Engineering, Sichuan University, Chengdu.
+- [x] **Endorsement** — already held, so the endorsement step below does not apply.
 - [ ] **Read the paper.** Your name is on it. Every number is reproducible with
       `python3 run_experiments.py`, so anything you doubt can be checked.
 - [x] **Prior-art search** — done 2026-09-20; see the section near the end. It
@@ -106,14 +106,9 @@ I.2.6; I.5.2; H.2.8
 
 ## Endorsement
 
-First-time submitters to `cs.LG` normally need an endorsement.
-
-1. **Register with your university email address**, not a personal one. arXiv
-   auto-endorses many institutional domains, which avoids the step entirely.
-2. If prompted anyway, arXiv issues an endorsement code. Send it to someone who
-   has published in `cs.LG` — a supervisor, a lecturer, or an author you cite.
-   They confirm you are a genuine researcher; they are not vouching for the
-   paper's correctness.
+Already held for this submission. (Retained for reference: first-time submitters
+to `cs.LG` normally need one, and registering with an institutional email often
+triggers auto-endorsement instead.)
 
 ---
 
