@@ -9,6 +9,10 @@
 \usepackage{graphicx}
 \usepackage{microtype}
 \usepackage{url}
+% Let long URLs break at any character rather than overflow the margin.
+\PassOptionsToPackage{hyphens}{url}
+\Urlmuskip=0mu plus 1mu
+\def\UrlBreaks{\do\/\do\-\do\.\do\_}
 \usepackage[hidelinks]{hyperref}
 \usepackage{natbib}
 
@@ -541,8 +545,10 @@ $1.5\times$ faster per renewal cycle.
 
 All inputs are public domain. Code, the download utility with row-count
 verification, and the derived tenancy and location tables are released at
-\url{https://github.com/naazzarov/storefront-turnover-leakage}. The pipeline is
-deterministic given the seed reported in the repository.
+\begin{center}
+\url{https://github.com/naazzarov/storefront-turnover-leakage}
+\end{center}
+The pipeline is deterministic given the seed reported in the repository.
 
 \bibliographystyle{plainnat}
 \begin{thebibliography}{99}
