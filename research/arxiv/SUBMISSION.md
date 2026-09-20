@@ -14,6 +14,10 @@ figure PDFs, flat, no subdirectories).
       is currently private, so the claim is not yet true and readers will click
       the link. Either make it public or remove the claim.
 - [x] **Affiliation** — School of Software Engineering, Sichuan University, Chengdu.
+- [x] **Authors** — Bahodir Nazarov and Oussama Jabrane. Enter *both* in the
+      arXiv author field, in this order. arXiv emails every listed author when
+      the paper is announced, so Oussama should have seen the final PDF first.
+- [x] **Acknowledgements** — Huanyu Li, for supervision.
 - [x] **Endorsement** — already held, so the endorsement step below does not apply.
 - [ ] **Read the paper.** Your name is on it. Every number is reproducible with
       `python3 run_experiments.py`, so anything you doubt can be checked.
