@@ -8,11 +8,10 @@ figure PDFs, flat, no subdirectories).
 
 ## Before you upload
 
-- [ ] **Make the code repository public.** The paper states that code and derived
-      data are available at
-      `https://github.com/naazzarov/storefront-turnover-leakage`. That repository
-      is currently private, so the claim is not yet true and readers will click
-      the link. Either make it public or remove the claim.
+- [x] **Repository stays private.** The paper therefore claims only that code and
+      derived data are "available from the authors on request", and prints no
+      GitHub link. If you later decide to publish the repository, add the link in
+      a revised version rather than leaving a dead one in v1.
 - [x] **Affiliation** — School of Software Engineering, Sichuan University, Chengdu.
 - [x] **Authors** — Bahodir Nazarov and Oussama Jabrane. Enter *both* in the
       arXiv author field, in this order. arXiv emails every listed author when
@@ -96,8 +95,8 @@ renewal cycle. All inputs are public domain and the pipeline is released in full
 ## Comments field
 
 ```
-11 pages, 5 figures, 4 tables. Code and derived data:
-https://github.com/naazzarov/storefront-turnover-leakage
+11 pages, 5 figures, 4 tables. Code and derived data available from the authors
+on request.
 ```
 
 ## ACM class (optional)

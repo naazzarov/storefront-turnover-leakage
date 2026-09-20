@@ -26,8 +26,7 @@ A Case Study in Urban Turnover Prediction}
   \end{tabular}\\[4pt]
   \normalsize School of Software Engineering, Sichuan University\\
   \normalsize Chengdu, China%
-  \thanks{Code and derived data:
-  \url{https://github.com/naazzarov/storefront-turnover-leakage}}%
+  \thanks{Code and derived data are available from the authors on request.}%
 }
 
 \date{\today}
@@ -72,8 +71,8 @@ and $0.70$, so random splits corrupt model selection as well as assessment.
 The substantive finding survives honest evaluation and is, to our knowledge, new:
 excess turnover concentrates at individual addresses rather than districts, with
 neighbours only weakly elevated and tenancies failing roughly $1.5\times$ faster
-per renewal cycle. All inputs are public domain and the pipeline is released in
-full.
+per renewal cycle. The underlying records are public domain, and the pipeline is
+available from the authors on request.
 \end{abstract}
 
 \section{Introduction}
@@ -556,12 +555,16 @@ analysis and for any errors rests with the authors.
 
 \section*{Reproducibility}
 
-All inputs are public domain. Code, the download utility with row-count
-verification, and the derived tenancy and location tables are released at
-\begin{center}
-\url{https://github.com/naazzarov/storefront-turnover-leakage}
-\end{center}
-The pipeline is deterministic given the seed reported in the repository.
+All inputs are public domain: the licence register is published by the City of
+Chicago as dataset \texttt{r5kz-chrr} and may be retrieved by anyone. Section~3
+states the extraction date, the row count against which the download was
+verified, and every threshold used to reconstruct tenancies, so the derived
+tables can be rebuilt from the published source.
+
+The analysis code, the download utility with row-count verification, and the
+derived tenancy and location tables are available from the authors on request.
+The pipeline is deterministic given a fixed seed, which is reported with the
+code.
 
 \bibliographystyle{plainnat}
 \begin{thebibliography}{99}
