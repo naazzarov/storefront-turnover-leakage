@@ -64,10 +64,16 @@ autocorrelation range of the predictors---would therefore still obtain an
 inflated estimate here, because the relevant scale is set by the aggregation
 units, not by the autocorrelation of the data.
 
-We confirm in this domain the known result that leakage equalises under honest
-evaluation: inflation ranges from $0.013$ AUC for logistic regression to $0.277$
-for gradient boosting, while blocked scores for all families fall between $0.62$
-and $0.70$, so random splits corrupt model selection as well as assessment.
+A controlled experiment isolates the mechanism. Varying only the size of the
+encoding group, a single leave-one-out group-mean feature reaches AUC $0.986$
+under random folds while its group-blocked value stays near chance, and
+inflation falls from $+0.415$ to $+0.088$ as group size falls from $13{,}555$ to
+$33$. Inflation tracks group size rather than how much groups differ, as the
+algebra requires: leave-one-out withholds a $1/|G|$ share of the signal, which
+is negligible for administrative units. We further confirm in this domain that
+leakage equalises model families under honest evaluation, inflation ranging from
+$0.013$ AUC for logistic regression to $0.277$ for gradient boosting, so random
+splits corrupt model selection as well as assessment.
 
 The substantive finding survives honest evaluation and is, to our knowledge, new:
 excess turnover concentrates at individual addresses rather than districts, with
@@ -120,12 +126,22 @@ block-size guidance is thus insufficient when group aggregates are present,
 because the governing scale is set by the aggregation units rather than by the
 autocorrelation of the data.
 
+\item \textbf{The mechanism, isolated and quantified.} In a controlled
+experiment varying only encoding-group size, a single group-mean feature reaches
+AUC $0.986$ under random folds against near-chance when folds are group-aligned,
+and inflation scales with group size rather than with between-group variance.
+Leave-one-out withholds a $1/|G|$ share of the signal, so it is not a meaningful
+precaution for groups the size of administrative units. This accounts
+quantitatively for the ablation above.
+
 \item \textbf{A quantification and a diagnostic in a new domain.} We report the
 magnitude on 1.21M records spanning thirty years, where average precision
 inflates more than sixfold, and give a cheap detector: sweep block size, and a
 flat curve indicates blocks below the governing scale. We also confirm in this
 domain the finding of \citet{rosenblatt2024} that model families differing
-sharply under leakage become equivalent once it is removed.
+sharply under leakage become equivalent once it is removed. The evaluation
+results are invariant to the target definition, reproducing to within $0.045$
+AUC across three definitions that select substantially different locations.
 
 \item \textbf{A substantive result.} Excess commercial turnover concentrates at
 individual addresses rather than districts. We are not aware of prior
@@ -418,6 +434,84 @@ arbitrary size do not satisfy it. Where the groups are not spatial at all---user
 merchant, session---the same failure arises with no spatial character, and the
 same remedy applies.
 
+\subsection{Isolating the mechanism}
+
+The ablation identifies \emph{which} features leak but not \emph{why}, and on
+observational data the two are hard to separate: administrative aggregates
+differ from neighbourhood features in group size, in spatial extent and in how
+strongly their groups differ from one another. We therefore construct encoding
+groups directly and vary one property at a time.
+
+Locations are partitioned into $K$ spatial clusters for $K$ between 10 and
+4{,}000, giving mean group sizes from 13{,}555 down to 33. For each $K$ we build
+a single feature---the leave-one-out group mean of tenant count---and evaluate
+it alone, under random folds and under folds aligned with the clusters.
+
+\begin{table}[t]
+\centering
+\begin{tabular}{rrrrrr}
+\toprule
+Groups & Mean size & Between-group var. & Random & Group-blocked & $\Delta$ \\
+\midrule
+   10 & 13{,}555 & $0.00044$ & $0.986$ & $0.571$ & $+0.415$ \\
+   25 &  5{,}422 & $0.00036$ & $0.987$ & $0.562$ & $+0.424$ \\
+   50 &  2{,}711 & $0.00032$ & $0.943$ & $0.539$ & $+0.404$ \\
+  100 &  1{,}355 & $0.00032$ & $0.869$ & $0.487$ & $+0.382$ \\
+  250 &     542  & $0.00051$ & $0.803$ & $0.549$ & $+0.254$ \\
+ 1{,}000 &   135  & $0.00121$ & $0.720$ & $0.563$ & $+0.157$ \\
+ 4{,}000 &    33  & $0.00364$ & $0.699$ & $0.611$ & $+0.088$ \\
+\bottomrule
+\end{tabular}
+\caption{A single leave-one-out group-mean feature, evaluated under random and
+group-aligned folds, as the size of the encoding group varies.}
+\label{tab:mechanism}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{../outputs/figures/fig6_mechanism.pdf}
+\caption{Leakage against encoding-group size. One feature reaches AUC $0.986$
+under random folds while its group-blocked value stays near chance.}
+\label{fig:mechanism}
+\end{figure}
+
+Three things follow from Table~\ref{tab:mechanism}.
+
+First, the magnitudes are not small. \emph{One} feature reaches AUC $0.986$
+under random folds. Nothing else is supplied to the model.
+
+Second, the group-blocked column stays between $0.487$ and $0.611$ throughout.
+The feature carries almost no signal that transfers to unseen groups, so
+essentially the whole random-fold score is leakage rather than a genuine
+relationship that blocking happens to suppress.
+
+Third, inflation tracks group size and not how much the groups differ.
+Between-group variance in the label rate rises by a factor of eight as groups
+shrink, while inflation falls from $+0.415$ to $+0.088$. Were leakage driven by
+groups differing from one another, the two columns would move together; they
+move oppositely.
+
+The algebra gives the reason. For a group $G$ the leave-one-out encoding is
+\[
+f_i \;=\; \frac{1}{|G|-1}\sum_{j \in G,\, j \neq i} y_j
+\qquad\text{so}\qquad
+f_i \;=\; \bar{y}_G \;+\; \frac{\bar{y}_G - y_i}{|G|-1}.
+\]
+The encoding differs from the full group mean---the quantity that would leak
+$y_i$ outright---by a term of order $1/|G|$. Leave-one-out therefore withholds a
+$1/|G|$ share of the signal and no more: about $3\%$ at $|G|=33$, and $0.007\%$
+at $|G|=13{,}555$. For large groups it is not a meaningful precaution, and what
+remains is a near-constant value within each group, which under random folds
+serves as a group identifier whose label rate the training rows disclose.
+
+This accounts for the ablation in Table~\ref{tab:ablation} quantitatively.
+Chicago's 50 wards and 78 community areas hold on the order of $1{,}700$
+locations each, placing them in the regime where leave-one-out protects almost
+nothing; they inflate by $+0.321$. Neighbourhood features at $50$--$500$\,m
+aggregate over a handful of premises, where the $1/|G|$ term is substantial;
+they inflate by $+0.034$. The distinction is group size, not distance, which is
+why partitioning on geometry does not address it.
+
 \subsection{The substantive finding}
 
 Under honest evaluation the urban result stands. Excess turnover concentrates at
@@ -482,11 +576,16 @@ are called high-turnover depends materially on whether exposure and sector are
 adjusted for, and a reader who prefers a raw-count definition would be studying
 a substantially different set of locations.
 
-We note that this sensitivity concerns the substantive finding rather than the
-evaluation findings. The leakage results compare partitioning schemes holding
-the target fixed, so they are unaffected by which definition is chosen; the
-mechanism---group aggregates encoding group identity---depends on the feature
-construction, not on the label.
+This sensitivity concerns the substantive finding rather than the evaluation
+findings, and we verify rather than assume the distinction. Repeating the
+random-versus-blocked comparison under each definition gives inflations of
+$+0.340$ (count), $+0.305$ (rate) and $+0.295$ (excess), with random-fold AUC
+between $0.951$ and $0.977$ and blocked AUC between $0.637$ and $0.676$. The
+three definitions select substantially different locations, yet the leakage they
+exhibit is the same to within $0.045$ AUC. The evaluation findings are therefore
+invariant to a choice that materially changes the substantive one, as the
+mechanism implies: leakage depends on how the features are constructed, not on
+how the label is defined.
 
 \section{Recommendations}
 

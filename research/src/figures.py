@@ -232,3 +232,44 @@ def fig_neighbour_decay(decay: pd.DataFrame) -> None:
     top.set_title("The effect is concentrated at the address, not the street",
                   fontsize=10)
     _save(fig, "fig5_neighbour_decay")
+
+
+def fig_mechanism(mech: pd.DataFrame) -> None:
+    """Leakage against the size of the group a feature aggregates over.
+
+    The controlled counterpart to the feature ablation: the only thing varying
+    is how many members each encoding group holds. Leave-one-out removes one of
+    |G| contributions, so its protection falls as 1/|G|, and the inflation curve
+    follows.
+    """
+    df = mech.sort_values("mean_group_size")
+
+    fig, (a, b) = plt.subplots(1, 2, figsize=(7.6, 3.0), constrained_layout=True)
+
+    a.plot(df["mean_group_size"], df["random_auc"], "o-", color=C_RANDOM,
+           lw=1.5, ms=4.5, label="random $k$-fold")
+    a.plot(df["mean_group_size"], df["blocked_auc"], "s-", color=C_BLOCKED,
+           lw=1.5, ms=4, label="group-blocked")
+    a.axhline(0.5, color=C_NEUTRAL, ls=":", lw=1)
+    a.annotate("chance", xy=(df["mean_group_size"].min(), 0.5), xytext=(0, 3),
+               textcoords="offset points", fontsize=7, color=C_NEUTRAL)
+    a.set_xscale("log")
+    a.set_xlabel("members per encoding group (log scale)")
+    a.set_ylabel("ROC AUC")
+    a.set_title("One group-mean feature, evaluated two ways")
+    a.legend(fontsize=7.5, loc="center left")
+
+    b.plot(df["mean_group_size"], df["inflation"], "o-", color=C_BLOCKED,
+           lw=1.6, ms=5)
+    for _, r in df.iterrows():
+        b.annotate(f"{r['inflation']:+.2f}",
+                   xy=(r["mean_group_size"], r["inflation"]), xytext=(0, 7),
+                   textcoords="offset points", ha="center", fontsize=7,
+                   color=C_BLOCKED)
+    b.set_xscale("log")
+    b.set_xlabel("members per encoding group (log scale)")
+    b.set_ylabel("AUC inflation")
+    b.set_ylim(0, df["inflation"].max() * 1.3)
+    b.set_title("Leave-one-out protection falls as $1/|G|$")
+
+    _save(fig, "fig6_mechanism")

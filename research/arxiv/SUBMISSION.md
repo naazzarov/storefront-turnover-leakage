@@ -1,7 +1,7 @@
 # arXiv submission checklist
 
 Everything below is ready to paste into the arXiv submission form. The upload
-archive is `research/arxiv-submission.tar.gz` (41 KB: `main.tex` plus five
+archive is `research/arxiv-submission.tar.gz` (50 KB: `main.tex` plus five
 figure PDFs, flat, no subdirectories).
 
 ---
@@ -95,7 +95,7 @@ renewal cycle. All inputs are public domain and the pipeline is released in full
 ## Comments field
 
 ```
-11 pages, 5 figures, 4 tables. Code and derived data available from the authors
+13 pages, 6 figures, 5 tables. Code and derived data available from the authors
 on request.
 ```
 
@@ -124,7 +124,7 @@ triggers auto-endorsement instead.)
    upload the PDF instead, as source submissions are preferred and let readers
    fetch the source.
 4. Check the PDF arXiv generates. It should match
-   `research/paper/main.pdf`: 11 pages, five figures, four tables.
+   `research/paper/main.pdf`: 13 pages, six figures, five tables.
 5. Enter the title, abstract, categories, and comments from above.
 6. Choose the CC BY 4.0 licence.
 7. Submit. Moderation typically takes one to two business days, after which the

@@ -192,6 +192,70 @@ def main() -> None:
     print("\n=== neighbour decay ===")
     print(decay.round(4).to_string(index=False))
 
+    # --- Experiment D: mechanism, varying encoding-group size -------------
+    from sklearn.cluster import MiniBatchKMeans
+
+    val = lab["n_tenants"].astype(float).to_numpy()
+    ok = ~np.isnan(xy).any(axis=1)
+    rows = []
+    for k in (10, 25, 50, 100, 250, 1000, 4000):
+        groups = np.full(len(y), -1)
+        groups[np.where(ok)[0]] = MiniBatchKMeans(
+            n_clusters=k, random_state=0, n_init=3).fit(xy[ok]).labels_
+        gs = pd.Series(groups)
+
+        # The encoding under test: leave-one-out group mean of the outcome-
+        # driving variable, supplied to the model as its only feature.
+        total = gs.map(pd.Series(val).groupby(gs).sum())
+        count = gs.map(gs.value_counts())
+        xg = ((total - val) / (count - 1)).to_numpy().reshape(-1, 1)
+
+        # Folds aligned with the encoding groups, which is the correct
+        # partition for this feature.
+        uniq = np.unique(groups[groups >= 0])
+        perm = np.random.default_rng(0).permutation(len(uniq))
+        amap = {u: i % 5 for u, i in zip(uniq, perm)}
+        gfold = np.array([amap.get(v, -1) for v in groups])
+
+        r = evaluate(gbm, rand, xg, y)
+        b = evaluate(gbm, gfold, xg, y)
+        rows.append({
+            "n_groups": k,
+            "mean_group_size": len(y) // k,
+            # Between-group variance in label rate: the alternative explanation
+            # the experiment is designed to rule out.
+            "between_var": float(pd.Series(y).groupby(gs).mean().var()),
+            "random_auc": r["auc"], "blocked_auc": b["auc"],
+            "inflation": r["auc"] - b["auc"],
+        })
+    mech = pd.DataFrame(rows)
+    mech.to_csv(paths.TABLES_DIR / "mechanism_group_size.csv", index=False)
+    figures.fig_mechanism(mech)
+    print("\n=== D. mechanism: leakage vs encoding-group size ===")
+    print(mech.round(5).to_string(index=False))
+
+    # --- Experiment E: are the leakage results definition-invariant? ------
+    rows = []
+    for definition in cursed.CurseDefinition:
+        relabelled = cursed.label_cursed(
+            pd.read_parquet(paths.PROCESSED_DIR / "features.parquet"), ten,
+            config=cursed.CurseConfig(definition=definition),
+        ).reset_index(drop=True)
+        dcols = [c for c in features.feature_columns(relabelled) if "exposure" not in c]
+        dy = relabelled["is_cursed"].astype(int).to_numpy()
+        dx, _ = models._prepare_matrix(relabelled, dcols)
+        r = evaluate(gbm, random_folds(dx, dy), dx, dy)
+        b = evaluate(gbm, models.spatial_folds(relabelled), dx, dy)
+        rows.append({"definition": definition.value, "n": len(dy),
+                     "n_positive": int(dy.sum()), "base_rate": float(dy.mean()),
+                     "random_auc": r["auc"], "blocked_auc": b["auc"],
+                     "inflation": r["auc"] - b["auc"],
+                     "random_ap": r["ap"], "blocked_ap": b["ap"]})
+    inv = pd.DataFrame(rows)
+    inv.to_csv(paths.TABLES_DIR / "definition_invariance.csv", index=False)
+    print("\n=== E. leakage under each target definition ===")
+    print(inv.round(3).to_string(index=False))
+
     # --- Supplement: robustness to the curse definition -------------------
     agree = cursed.definition_agreement(lab, ten)
     agree.to_csv(paths.TABLES_DIR / "definition_agreement.csv", index=False)
