@@ -17,7 +17,7 @@
 \usepackage{natbib}
 
 \title{Spatial Blocking Does Not Prevent Group-Aggregate Leakage:\\
-A Case Study in Urban Turnover Prediction}
+Mechanism, Magnitude and Limits in Urban Prediction}
 
 \author{%
   \begin{tabular}{c@{\hspace{3.5em}}c}
@@ -74,6 +74,16 @@ is negligible for administrative units. We further confirm in this domain that
 leakage equalises model families under honest evaluation, inflation ranging from
 $0.013$ AUC for logistic regression to $0.277$ for gradient boosting, so random
 splits corrupt model selection as well as assessment.
+
+Rebuilding the task from New York City's licence register reproduces the
+leakage in direction but at roughly one fifth the magnitude, which the mechanism
+predicts: that register is shallow, $98\%$ of its locations have a single
+tenant, and group means with little variance have little to transmit. We report
+this as a boundary condition---leakage scales with the group-level structure the
+outcome carries---rather than as a confirmation. Notably, most municipal portals
+publish only currently active businesses; Seattle and Los Angeles record no
+closure dates at all, which is why registers deep enough for this analysis are
+scarce.
 
 The substantive finding survives honest evaluation and is, to our knowledge, new:
 excess turnover concentrates at individual addresses rather than districts, with
@@ -142,6 +152,14 @@ domain the finding of \citet{rosenblatt2024} that model families differing
 sharply under leakage become equivalent once it is removed. The evaluation
 results are invariant to the target definition, reproducing to within $0.045$
 AUC across three definitions that select substantially different locations.
+
+\item \textbf{A replication that bounds the claim.} Rebuilding the task from
+New York City's licence register reproduces the leakage in direction but at
+roughly one fifth the magnitude. The mechanism predicts this: New York's
+register is shallow, $98\%$ of its locations have one tenant, and group means
+with little variance have little to transmit. We report this as a boundary
+condition---leakage scales with the group-level structure the outcome
+carries---rather than as a confirmation.
 
 \item \textbf{A substantive result.} Excess commercial turnover concentrates at
 individual addresses rather than districts. We are not aware of prior
@@ -512,6 +530,67 @@ aggregate over a handful of premises, where the $1/|G|$ term is substantial;
 they inflate by $+0.034$. The distinction is group size, not distance, which is
 why partitioning on geometry does not address it.
 
+\subsection{Replication in a second city}
+
+The results so far rest on one city. To test whether they reflect something
+general about group-aggregate features or something particular to Chicago's
+administrative geography, we rebuilt the task from the New York City Department
+of Consumer and Worker Protection licence register (\texttt{w7w3-xahh},
+$72{,}452$ records), applying the same address normalisation, the same tenancy
+reconstruction and the same succession rule, and supplying the model only with
+leave-one-out means over council district, community board and borough.
+
+Finding a second city was itself the obstacle, and the reason is worth
+recording. Most municipal portals publish a register of \emph{currently active}
+businesses. Seattle's \emph{Active Business License Tax Certificate} carries a
+start date and no end date; Los Angeles's \emph{Listing of Active Businesses}
+has an end-date column that is null in all $631{,}925$ rows. Neither permits
+closure to be observed at all. Chicago's practice of publishing every licence
+issued since 1995, with cancellation dates, is unusual, and it is why this
+analysis has a thirty-year window in one city and a much shorter one elsewhere.
+
+\begin{table}[t]
+\centering
+\begin{tabular}{lrr}
+\toprule
+ & Chicago & New York \\
+\midrule
+Licence records            & $1{,}207{,}055$ & $72{,}452$ \\
+Locations                  & $161{,}607$ & $40{,}964$ \\
+Multi-tenant locations     & $24{,}383$ ($15\%$) & $813$ ($2\%$) \\
+Maximum tenants at one address & $20$ & $3$ \\
+Administrative groups      & $78$ & $52$ \\
+\midrule
+Random $k$-fold AUC        & $0.978$ & $0.651$ \\
+Group-blocked AUC          & $0.657$ & $0.581$ \\
+Inflation                  & $+0.321$ & $+0.070$ \\
+\bottomrule
+\end{tabular}
+\caption{Group-aggregate features evaluated identically in both cities. The
+direction reproduces; the magnitude does not.}
+\label{tab:nyc}
+\end{table}
+
+Table~\ref{tab:nyc} shows leakage in the same direction in New York, at roughly
+one fifth of the Chicago magnitude. We take this as a boundary condition rather
+than a confirmation, and the mechanism of Section~5.4 predicts it.
+
+A group mean can only leak to the extent that it varies between groups, and that
+variation comes from the outcome. New York's register begins in 2019 rather than
+1995, so $98\%$ of its locations have a single tenant and the maximum is three.
+The group means are therefore nearly constant across the city, and carry little
+to encode. Chicago's thirty-year window produces $15\%$ multi-tenant locations
+and turnover counts up to $20$, giving the same features far more group-level
+structure to transmit.
+
+The claim this supports is accordingly narrower than "group aggregates leak
+everywhere". It is that leakage through group aggregates scales with how much
+group-level structure the outcome carries, and that where it is substantial---as
+in a register deep enough to observe real turnover---spatial blocking does not
+remove it. A shallow register understates the hazard; it does not make it safe,
+since the practitioner cannot tell from the inflated number which regime they
+are in.
+
 \subsection{The substantive finding}
 
 Under honest evaluation the urban result stands. Excess turnover concentrates at
@@ -617,9 +696,11 @@ absolute tenure figures should not be read from this data.
 Community area enters both the target definition and the partitioning, so
 area-level comparisons are circular and excluded from substantive claims.
 
-The single-city scope limits external validity of the urban finding. The
-evaluation findings depend on the grouped structure of the features rather than
-on Chicago specifically, but replication across cities remains future work.
+The urban finding rests on Chicago alone. Our New York replication speaks to
+the evaluation results, not to the turnover result, whose magnitude that register
+is too shallow to measure. Whether high-turnover addresses concentrate similarly
+in other cities is untested, and testing it requires registers that record
+closure, which most cities do not publish.
 
 Excess turnover is defined relative to a model, so the label inherits that
 model's assumptions. Three alternative definitions are reported in the
@@ -642,6 +723,15 @@ block size from predictor autocorrelation has done everything the spatial
 literature asks and still obtains a fully inflated estimate. The check that would
 have caught it is cheap---sweep the block size and look for a flat curve---and
 the fix is to partition by the units the features aggregate over.
+
+The effect is bounded rather than universal. A second city reproduces it in
+direction at roughly one fifth the magnitude, because its register is too
+shallow for much turnover to have been observed and group means with little
+variance have little to transmit. Leakage through group aggregates therefore
+scales with the group-level structure the outcome carries. That is a weaker
+claim than "group aggregates always leak", and a more useful one: it says where
+to look, and it means a modest inflation in a shallow dataset is not evidence of
+safety.
 
 The substantive finding survives honest evaluation: excess commercial turnover
 concentrates at individual addresses rather than districts, with immediate
