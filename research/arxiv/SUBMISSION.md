@@ -8,10 +8,10 @@ figure PDFs, flat, no subdirectories).
 
 ## Before you upload
 
-- [x] **Repository stays private.** The paper therefore claims only that code and
-      derived data are "available from the authors on request", and prints no
-      GitHub link. If you later decide to publish the repository, add the link in
-      a revised version rather than leaving a dead one in v1.
+- [x] **Repository is public** at
+      `https://github.com/naazzarov/storefront-turnover-leakage`, and the paper
+      links to it in the author footnote and the Reproducibility section. Confirm
+      the link resolves before submitting.
 - [x] **Affiliation** — School of Software Engineering, Sichuan University, Chengdu.
 - [x] **Authors** — Bahodir Nazarov and Oussama Jabrane. Enter *both* in the
       arXiv author field, in this order. arXiv emails every listed author when
@@ -46,7 +46,7 @@ task rather than proposing an urban method.
 ## Title
 
 ```
-Spatial Blocking Does Not Prevent Group-Aggregate Leakage: A Case Study in Urban Turnover Prediction
+Spatial Blocking Does Not Prevent Group-Aggregate Leakage: Mechanism, Magnitude and Limits in Urban Prediction
 ```
 
 ## Abstract
@@ -95,8 +95,7 @@ renewal cycle. All inputs are public domain and the pipeline is released in full
 ## Comments field
 
 ```
-14 pages, 6 figures, 7 tables. Code and derived data available from the authors
-on request.
+14 pages, 6 figures, 7 tables. Code and data: https://github.com/naazzarov/storefront-turnover-leakage
 ```
 
 ## ACM class (optional)

@@ -27,7 +27,7 @@ Mechanism, Magnitude and Limits in Urban Prediction}
   \end{tabular}\\[4pt]
   \normalsize School of Software Engineering, Sichuan University\\
   \normalsize Chengdu, China%
-  \thanks{Code and derived data are available from the authors on request.}%
+  \thanks{Code and derived data: \url{https://github.com/naazzarov/storefront-turnover-leakage}}%
 }
 
 \date{\today}
@@ -88,8 +88,9 @@ scarce.
 The substantive finding survives honest evaluation and is, to our knowledge, new:
 excess turnover concentrates at individual addresses rather than districts, with
 neighbours only weakly elevated and tenancies failing roughly $1.5\times$ faster
-per renewal cycle. The underlying records are public domain, and the pipeline is
-available from the authors on request.
+per renewal cycle. The underlying records are public domain and the pipeline is
+released in full, so every number reported here can be regenerated from the
+published source.
 \end{abstract}
 
 \section{Introduction}
@@ -752,9 +753,13 @@ verified, and every threshold used to reconstruct tenancies, so the derived
 tables can be rebuilt from the published source.
 
 The analysis code, the download utility with row-count verification, and the
-derived tenancy and location tables are available from the authors on request.
-The pipeline is deterministic given a fixed seed, which is reported with the
-code.
+derived tenancy and location tables are released at
+\begin{center}
+\url{https://github.com/naazzarov/storefront-turnover-leakage}
+\end{center}
+A single entry point, \texttt{run\_experiments.py}, regenerates every table and
+figure in one pass, and the pipeline is deterministic given the seed recorded in
+the repository.
 
 \bibliographystyle{plainnat}
 \begin{thebibliography}{99}
